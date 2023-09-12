@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,6 +38,28 @@ namespace SteelOnion.PythonHost
                 _scope = Py.CreateScope();
                 _scope.SetAttr("context", Context.ToPython());
                 _scope.Exec(File.ReadAllText(Script.FullName));
+                if (Context.AutoBind)
+                {
+                    foreach (var member in _scope.GetDynamicMemberNames())
+                    {
+                        try
+                        {
+                            if (member.StartsWith("__")) continue;
+                            var item = _scope.GetAttr(member);
+                            if (item == null) continue;
+                            if (item is PyObject pyObj && item.GetAttr("__call__") != null)
+                            {
+                                Console.WriteLine("AutoBinding Function: " + item);
+                                Context.Bind(item.GetAttr("__name__").ToString(), pyObj);
+                            }
+                        }
+                        catch
+                        {
+                            continue;
+                        }
+
+                    }
+                }
             }
         }
 
