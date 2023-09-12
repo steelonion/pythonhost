@@ -4,3 +4,6 @@ context.AutoBind=True
 
 def newfunc():
 	pass
+
+def testautobind():
+	context.PrintLine("testautobind!")

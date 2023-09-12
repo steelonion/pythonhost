@@ -9,6 +9,14 @@ using System.Threading.Tasks;
 
 namespace SteelOnion.PythonHost.Tests
 {
+    public class TestContext : WrapperContext
+    {
+        public void testautobind()
+        {
+            AutoInvoke();
+        }
+    }
+
     [TestClass()]
     public class WrapperFactoryTests
     {
@@ -22,9 +30,9 @@ namespace SteelOnion.PythonHost.Tests
         public void CreateWrapperTest()
         {
             LoadPythonRuntimeTest();
-            var wrapper= WrapperFactory.Inst.CreateWrapper<WrapperContext>();
+            var wrapper= WrapperFactory.Inst.CreateWrapper<TestContext>();
             wrapper.Load(new FileInfo("test.py"));
-
+            wrapper.Context.testautobind();
             Console.WriteLine(wrapper.Context);
             wrapper.Dispose();
         }
